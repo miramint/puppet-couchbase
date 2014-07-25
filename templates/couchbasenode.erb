@@ -1,1 +1,3 @@
-/opt/couchbase/bin/couchbase-cli rebalance -c localhost -u <%= @user %> -p '<%= @password %>' --server-add=<%= @server_name %> --server-add-username=<%= @user %> --server-add-password='<%= @password %>'
+<% if (@server_name != @fqdn) %>
+/opt/couchbase/bin/couchbase-cli rebalance -c <%= @server_name %> -u <%= @user %> -p '<%= @password %>' --server-add=<%= @fqdn %> --server-add-username=<%= @user %> --server-add-password='<%= @password %>'
+<% end %>
