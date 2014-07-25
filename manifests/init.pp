@@ -18,6 +18,8 @@
 # set to the fqdn of the server the module is being launched on
 # [*server_group*]
 # The group in which this couchbase server will live. Set to 'default'
+# [*data_path*]
+# The path in which this couchbase cluster stores its data files
 # [*install_method*]
 # The method used to install couchbase, 'curl' or 'package'. Default is 'curl'
 #
@@ -51,6 +53,7 @@ class couchbase
   $edition        = $::couchbase::params::edition,
   $nodename       = $::fqdn,
   $server_group   = 'default',
+  $data_path      = undef,
   $install_method = 'curl',
 ) inherits ::couchbase::params {
 
@@ -82,6 +85,7 @@ class couchbase
     user         => $user,
     password     => $password,
     server_group => $server_group,
+    data_path    => $data_path,
   }
 
   ->

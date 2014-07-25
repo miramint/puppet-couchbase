@@ -12,6 +12,8 @@
 # Password to login to couchbase servers
 # [*server_group*]
 # The grouping in which this couchbase cluster lives (necessary)
+# [*data_path*]
+# The path in which this couchbase cluster stores its data files
 #
 # === Authors
 #
@@ -28,6 +30,7 @@ class couchbase::config (
   $user         = "$couchbase::user",
   $password     = "$couchbase::password",
   $server_group = 'default',
+  $data_path    = undef,
 ) {
 
   include couchbase::params 
@@ -41,6 +44,19 @@ class couchbase::config (
     tries       => 5,
     try_sleep   => 10,
     refreshonly => true,
+  }
+  
+  if $data_path {
+    exec { 'couchbase-node-init':
+      path        => ['/opt/couchbase/bin', '/usr/bin', '/bin', '/sbin', '/usr/sbin' ],
+      command     => "couchbase-cli node-init -c localhost:8091 --node-init-data-path=${data_path} -u ${user} -p ${password}",
+      onlyif      => "test \"${::couchbase_data_path}\" != \"${data_path}\"",
+      require     => [ Class['couchbase::install'] ],
+      before      => [ Exec['couchbase-init'] ],
+      logoutput   => true,
+      tries       => 5,
+      try_sleep   => 10,
+    }
   }
 
   #Just in case, include concat setup
