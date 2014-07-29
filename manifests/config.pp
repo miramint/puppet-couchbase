@@ -50,7 +50,7 @@ class couchbase::config (
     exec { 'couchbase-node-init':
       path        => ['/opt/couchbase/bin', '/usr/bin', '/bin', '/sbin', '/usr/sbin' ],
       command     => "couchbase-cli node-init -c localhost:8091 --node-init-data-path=${data_path} -u ${user} -p ${password}",
-      onlyif      => "test \"${::couchbase_data_path}\" != \"${data_path}\"",
+      onlyif      => "test \"`couchbase-cli server-info -c localhost:8091 -u ${user} -p ${password} | python -c 'import json,sys;obj=json.load(sys.stdin);print obj[\"storage\"][\"hdd\"][0][\"path\"]'`\" != \"${data_path}\"",
       require     => [ Class['couchbase::install'] ],
       before      => [ Exec['couchbase-init'] ],
       logoutput   => true,
